@@ -1,0 +1,18 @@
+.centered-button-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.new-box-btn {
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.3rem;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    background-color: #888;
+}

@@ -1,0 +1,25 @@
+.home {
+    width: 100%;
+    min-height: 100vh;
+    background: #555;
+    color: #fff;
+    position: fixed; /*does this still allow scrolling*/
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.home-text {
+    text-align: center;
+    max-width: 800px;
+}
+.home-text h1{
+    font-size: 60px;
+    font-weight: 600;
+}
+.home-text p{
+    max-width: 700px;
+    margin: 10px auto 20px;
+    line-height: 1.4;
+}

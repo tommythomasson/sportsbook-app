@@ -1,0 +1,1 @@
+The public folder is to hold any static files that need to be reached... such as static webpages, or any images.
