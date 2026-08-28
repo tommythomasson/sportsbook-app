@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from util import Util
+from backend.util import Util
 
 import json
 import re
@@ -66,7 +66,10 @@ class ESPN:
         print(f"Pulling {sport.upper()} Rosters for teams:")
 
         # pull rosters of all teams from given the sport
-        teams = list(ESPN.teams_dict[sport].values())
+        # do not want to do this since this will also pull all stats for
+        # all players when this is not necessarily required given todays games
+        # this might be worthwhile in the future as a time saving technique, but for now limit to what is currently used
+        # teams = list(ESPN.teams_dict[sport].values())
 
         for team in teams:
             try:
@@ -98,7 +101,6 @@ class ESPN:
                     except:
                         roster[team] = {}
                         roster[team][athlete["name"]] = [athlete["id"], position]
-        # post roster to api
         return roster
 
 
@@ -127,28 +129,31 @@ class ESPN:
 
                 # hold last stored date here
                 # scraping all games for each player
-                for group in gamelog_json["groups"]:
-                    for table in group["tbls"]:
-                        if "events" in table: #last table is stat definitions
-                            for event in table["events"]:
-                                date = event["dt"].split("T")[0] # can change date to est first
-                                loc = 'A'
-                                if (event["opp"]["atVs"] == 'vs'):
-                                    loc = 'H'
-                                game_stats = event["stats"]
-                                game_stats.extend([position, loc, date])
-                                rosters_and_stats[team_name][player_name].append(game_stats)
-                rosters_and_stats[team_name][player_name].sort(key=lambda x: x[-1]) # this would put the most recent games at the end of the list
-
+                try:
+                    for group in gamelog_json["groups"]:
+                        for table in group["tbls"]:
+                            if "events" in table: #last table is stat definitions
+                                for event in table["events"]:
+                                    date = event["dt"].split("T")[0] # can change date to est first
+                                    loc = 'A'
+                                    if (event["opp"]["atVs"] == 'vs'):
+                                        loc = 'H'
+                                    game_stats = event["stats"]
+                                    game_stats.extend([position, loc, date])
+                                    rosters_and_stats[team_name][player_name].append(game_stats)
+                    rosters_and_stats[team_name][player_name].sort(key=lambda x: x[-1]) # this would put the most recent games at the end of the list
+                except:
+                    print(f"Could not reach game stats for '{player_name}', id: {player_id}")
+                    continue
         # instead of specifying a date, check stats list for most recent date, 
         # then pull since that time (should be a specific index since this will be a sorted list)
         return rosters_and_stats
     
     # specifying 'today' because of espn scoreboard of most sports being daily
     # nfl will show all games for the given week, with the week updating on tuesdays/wednesdays
-    def getTeamsPlayingToday(driver, league: str):
+    def getTeamsPlayingToday(driver, league: str) -> list[str]:
         league_to_sport = {
-            "NHL": "hockey", # only known link for now
+            #"NHL": "hockey", # only known link for now
             "MLB": "baseball"
         }
         if league not in league_to_sport.keys():
@@ -166,11 +171,13 @@ class ESPN:
         sport = soup.find('pre').text
         page_source = json.loads(soup.find('pre').text)
 
-        print(page_source['sports'][0])
+        events = page_source['sports'][0]['leagues'][0]['events']
 
-        teams_playing = []
-        for event in page_source['events']:
-            teams_playing.append(team.strip() for team in event['shortName'].split('@'))
+        teams_playing = [
+            team.strip().lower()
+            for event in events
+            for team in event['shortName'].split('@')
+        ]
 
         return teams_playing
 
