@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from backend.util import Util
+from util import Util
 
 import json
 import re
@@ -149,15 +149,24 @@ class ESPN:
     def getTeamsPlayingToday(driver, league: str):
         league_to_sport = {
             "NHL": "hockey", # only known link for now
+            "MLB": "baseball"
         }
         if league not in league_to_sport.keys():
             raise KeyError(f"{league} not in supported leagues list: {league_to_sport.keys()}")
         
         scoreboardURL = f"https://site.web.api.espn.com/apis/personalized/v2/scoreboard/header?sport={league_to_sport[league]}&league={league}"
 
+        # test url:
+        '''
+        https://site.web.api.espn.com/apis/personalized/v2/scoreboard/header?sport=baseball&league=MLB
+        '''
+
         driver.get(scoreboardURL)
         soup = BeautifulSoup(driver.page_source, 'lxml') # alternate 'html.parser'
+        sport = soup.find('pre').text
         page_source = json.loads(soup.find('pre').text)
+
+        print(page_source['sports'][0])
 
         teams_playing = []
         for event in page_source['events']:

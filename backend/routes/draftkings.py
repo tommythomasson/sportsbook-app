@@ -43,6 +43,7 @@ class Draftkings:
         time.sleep(1)  # Adjust as necessary based on page load time
 
         soup = BeautifulSoup(driver.page_source, 'lxml') # alternate 'html.parser'
+        print(soup)
         page_source = json.loads(soup.find('pre').text)
 
         return page_source
