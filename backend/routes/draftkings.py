@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from util import Util
+from backend.util import Util
 
 from pydantic import BaseModel
 from typing import List

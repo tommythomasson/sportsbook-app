@@ -2,19 +2,17 @@
 set -e
 
 echo "Starting backend..."
-cd backend
-uvicorn main:app --reload &
+uvicorn backend.main:app --reload &
 BACKEND_PID=$!
 
 echo "Starting frontend..."
-cd ../frontend
 
 # if [ ! -d "node_modules" ]; then
 #  echo "Installing frontend dependencies..."
 #  npm install
 # fi
 
-npm run dev &
+npm --prefix frontend run dev &
 FRONTEND_PID=$!
 
 # Trap exit signals to clean up

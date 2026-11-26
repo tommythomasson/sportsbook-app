@@ -1,0 +1,1 @@
+git config push.autoSetupRemote true
