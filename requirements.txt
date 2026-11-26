@@ -1,2 +1,11 @@
 # Testing:
 pytest
+
+# Backend:
+uvicorn
+bs4
+selenium
+#webdriver_manager
+
+# Frontend:
+fastapi
